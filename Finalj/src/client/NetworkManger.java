@@ -14,13 +14,13 @@ public class NetworkManger {
             clientSocket = new Socket("127.0.0.1", 10000);
             listen();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } //call the server
     }
 
     public void listen(){
         Thread listen = new Thread( ()->{
+            System.out.println("listen");
             String modifiedSentence;
             BufferedReader inFromServer;
             try {
@@ -45,15 +45,19 @@ public class NetworkManger {
 
     public void sendMsg(HashMap<String,String> data){
         Thread msg = new Thread(()->{
-            System.out.println("run");
+            System.out.println("sendMsg");
             OutputStream os;
+            ObjectOutputStream mapOutputStream = null;  
             try {
                 os = clientSocket.getOutputStream();// OutputStream where to send the map in case of network you get it from the Socket instance.
-                ObjectOutputStream mapOutputStream = new ObjectOutputStream(os);
+                mapOutputStream = new ObjectOutputStream(os);
                 mapOutputStream.writeObject(data);
+                return;
             }   
             catch (Exception e)  {
                 //TODO: handle exception
+            }finally{
+                Thread.currentThread().interrupt();
             }
         });
         msg.start();

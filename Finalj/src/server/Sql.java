@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 import com.mysql.jdbc.Connection;
 
-import jdk.internal.jline.internal.Nullable;
+
 
 
 public class Sql {
@@ -63,7 +63,7 @@ public class Sql {
 	public ResultSet selectQuery(String col ,String table, String val){
 		try {
 			// PreparedStatement - takes the java code select and replace it with sql code
-			PreparedStatement statement = connect.prepareStatement("select * from "+table + " where "+col+"="+val);
+			PreparedStatement statement = connect.prepareStatement("select * from javaProj."+table + " where "+col+"='"+val+"'");
 			ResultSet result = statement.executeQuery();// execute the statement
 			return result;
 			
@@ -72,7 +72,19 @@ public class Sql {
 		}
 		return null;
 	}
-	
+
+	public ResultSet selectAll(String table){
+		try {
+			// PreparedStatement - takes the java code select and replace it with sql code
+			PreparedStatement statement = connect.prepareStatement("select * from javaProj."+table);
+			ResultSet result = statement.executeQuery();// execute the statement
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public static void connection()
 	{
 		try {

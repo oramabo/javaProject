@@ -28,6 +28,7 @@ public class socketHandler extends Thread {
 		try {
 			ObjectInputStream inFromClient = new ObjectInputStream(incoming.getInputStream());
 			DataOutputStream outToClient = new DataOutputStream(incoming.getOutputStream());
+			String responseMsg="";
 			while (true) {
 				HashMap<String, String> obj = (HashMap) inFromClient.readObject(); // get Object from client
 				System.out.println(obj.toString());
@@ -36,16 +37,25 @@ public class socketHandler extends Thread {
 					case "login":
 						ResultSet res = sql.selectQuery("name", "Clients",obj.get("username"));
 						while (res.next()) {
-							System.out.println(res.getString("username"));
+							
+							if( res.getString("password").equals(obj.get("password"))){
+								responseMsg = "login succsefully";
+							}
+							else{
+								responseMsg = "user login faild";
+							}
+							// send String to client
+							System.out.println(responseMsg);
+						
+							return;
 						}
 						break;
-
-					default:
-						break;
-				}
-
-				// send String to client
-				outToClient.writeBytes("d");
+						
+						default:
+							break;
+					}
+					
+				outToClient.writeBytes("asdsadsa");
 			}
 		} catch (IOException | SQLException |  ClassNotFoundException e) {
 			e.printStackTrace();
