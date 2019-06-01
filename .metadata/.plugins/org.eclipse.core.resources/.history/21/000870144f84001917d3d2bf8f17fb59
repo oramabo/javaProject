@@ -1,0 +1,8 @@
+package client;
+
+public class Manager {
+    public String name;
+    public String id;
+    public int timeInJob;
+    
+}
