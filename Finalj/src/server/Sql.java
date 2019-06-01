@@ -1,33 +1,21 @@
 package server;
 
+import java.lang.reflect.Array;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+
 import com.mysql.jdbc.Connection;
+
+import jdk.internal.jline.internal.Nullable;
 
 
 public class Sql {
 
 	private static Connection connect; 
 	
-	public static void delete_statement(){
-		String sqldelete = "delete from student where h between ? and ? and name = ?";
-
-		try {
-			PreparedStatement pst = connect.prepareStatement(sqldelete);
-			pst.setString(1, "180");
-			pst.setString(2, "190");
-			pst.setString(3, "effi");
-			pst.execute();
-			
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-		
-	}
 	
 	public static void update_statement(String userID,String colName, String table, String val){
 		
@@ -49,18 +37,21 @@ public class Sql {
 		
 	}
 	
-	public static void insert_statement(String s1 , String s2,String s3,String s4,String s5,String s6 ){
-		
-		String sqlInsert = "insert into test_inc.student (idhr,hr_name,hr_phone,hr_age,hr_address,hr_mail) values (?,?,?,?,?,?)";
-		
+	public static void insert_statement(String tableName, String[] cols,String[] values ){
+
+		String col = Arrays.toString(cols).replaceAll("["," ").replaceAll("]"," ");
+		String[] vals = new String[values.length];
+		Arrays.fill(vals,"?");
+		String val =  Arrays.toString(vals).replaceAll("["," ").replaceAll("]"," ");
+
+		String sqlInsert = "insert into" + tableName +" ( "+ col +" ) values( "+val+")";
+		System.out.println("sql command:" + sqlInsert);
 		try {
 			PreparedStatement pst = connect.prepareStatement(sqlInsert);
-			pst.setString(1, s1);
-			pst.setString(2, s2);
-			pst.setString(3, s3);
-			pst.setString(4, s4);
-			pst.setString(5, s5);
-			pst.setString(6, s6);
+			int cnt = 0;
+			for( String value : values){
+				pst.setString(cnt++, value);
+			}
 			pst.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -69,23 +60,17 @@ public class Sql {
 	
 	}
 	
-	public static void selectAllQuery()
-	{
+	public ResultSet selectQuery(String col ,String table, String val){
 		try {
 			// PreparedStatement - takes the java code select and replace it with sql code
-			PreparedStatement statement = connect.prepareStatement("select * from student order by group ");
+			PreparedStatement statement = connect.prepareStatement("select * from "+table + " where "+col+"="+val);
 			ResultSet result = statement.executeQuery();// execute the statement
-			while(result.next())
-			// take the rows in the result set
-			{
-				//getString(i) - take the col number i 
-				System.out.println(result.getString(1) + result.getString(2) + result.getString(3)   );
-			}
+			return result;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		return null;
 	}
 	
 	public static void connection()
@@ -102,13 +87,13 @@ public class Sql {
 	{
 		
 		connection();
-		String host = "jdbc:mysql://localhost:3306/**THIS IS THE DATA BASE NAME**";
+		String host = "jdbc:mysql://localhost:3306/javaProj";
 		String username = "root";//user name
-		String password = "1234";// password of the sqlworkbanch
+		String password = "";// password of the sqlworkbanch
 		
 		try {
 			connect = (Connection) DriverManager.getConnection(host, username, password);
-		System.out.println("work");
+			System.out.println("work");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

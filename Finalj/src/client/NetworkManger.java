@@ -1,14 +1,61 @@
 package client;
 
+import java.io.*; 
+import java.net.*;
+import java.util.HashMap;
 import java.util.HashMap;
 
 public class NetworkManger {
 
+    public Socket clientSocket;
+    NetworkManger() 
+    {   
+        try {
+            clientSocket = new Socket("127.0.0.1", 10000);
+            listen();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } //call the server
+    }
+
+    public void listen(){
+        Thread listen = new Thread( ()->{
+            String modifiedSentence;
+            BufferedReader inFromServer;
+            try {
+                inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                System.out.println(inFromServer.readLine());
+                    while(true)
+                    {
+                        modifiedSentence = inFromServer.readLine(); // getting from server
+                        if(modifiedSentence != null)
+                        {
+                            System.out.println("FROM : " + modifiedSentence);// printing in the console	
+                        }    
+                    }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
+        listen.start();
+    }
 
 
-
-    public HashMap<String,String> sendMsg(HashMap<String,String> data){
-
-        return data;
+    public void sendMsg(HashMap<String,String> data){
+        Thread msg = new Thread(()->{
+            System.out.println("run");
+            OutputStream os;
+            try {
+                os = clientSocket.getOutputStream();// OutputStream where to send the map in case of network you get it from the Socket instance.
+                ObjectOutputStream mapOutputStream = new ObjectOutputStream(os);
+                mapOutputStream.writeObject(data);
+            }   
+            catch (Exception e)  {
+                //TODO: handle exception
+            }
+        });
+        msg.start();
     }
 }
