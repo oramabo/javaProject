@@ -13,11 +13,11 @@ public class main {
 		HashMap<String,String> dataToSend = new HashMap<>();
 
 		do{
-			System.out.println("1.login as manager\n 2. login as client");
+			System.out.println("1.login as manager\n2. login as client");
 			userType = Integer.parseInt( scanner.nextLine()); 
 		}while(  userType != 1 && userType != 2);
 		do{
-			System.out.println("1.login\n 2. change password");
+			System.out.println("1.login\n2. change password");
 			method = Integer.parseInt( scanner.nextLine());
 		}while(  method != 1 && method != 2);
 
@@ -28,11 +28,12 @@ public class main {
 		scanner.close(); // close the scanner
 
 		dataToSend.put("func", method == 1? "login" : "passChange");
+		dataToSend.put("userType", userType == 1? "manager" : "client");
 		dataToSend.put("username", userName);
 		dataToSend.put("password", pass);
 
-		networkManger.sendMsg(dataToSend);
-
+		String aaa = networkManger.sendMsg(dataToSend);
+		System.out.println("\naaaaaaaaaaaaaaa"+aaa);
 		// if( res.get("code").equals("ok")){
 		// 	menu(userType);
 		// }

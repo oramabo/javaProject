@@ -17,15 +17,15 @@ public class Sql {
 	private static Connection connect; 
 	
 	
-	public static void update_statement(String userID,String colName, String table, String val){
+	public static void update_statement(String[] cond,String colName, String table, String val){
 		
-		String sqlupdate = "UPDATE "+table+" SET "+colName+"=?  WHERE id =? ";
+		String sqlupdate = "UPDATE "+table+" SET "+colName+"=?  WHERE "+cond[0]+"=? ";
 		
 		try {
 			PreparedStatement pst = connect.prepareStatement(sqlupdate);
 			
 			pst.setString(1, val);
-			pst.setString(2, userID);
+			pst.setString(2, cond[1]);
 
 			pst.executeUpdate();
 			
@@ -56,8 +56,6 @@ public class Sql {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-	
 	}
 	
 	public ResultSet selectQuery(String col ,String table, String val){
@@ -101,7 +99,7 @@ public class Sql {
 		connection();
 		String host = "jdbc:mysql://localhost:3306/javaProj";
 		String username = "root";//user name
-		String password = "";// password of the sqlworkbanch
+		String password = "";// password of the sqlworkbench
 		
 		try {
 			connect = (Connection) DriverManager.getConnection(host, username, password);
