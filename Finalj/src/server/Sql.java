@@ -6,8 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.sql.Connection;
 
-import com.mysql.jdbc.Connection;
+
 
 
 
@@ -86,7 +87,7 @@ public class Sql {
 	public static void connection()
 	{
 		try {
-			Class.forName("com.mysql.jdbc.Driver");// connect to the driver jar file mysql connector 
+			Class.forName("com.mysql.cj.jdbc.Driver");// connect to the driver jar file mysql connector 
 			System.out.println("Works");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

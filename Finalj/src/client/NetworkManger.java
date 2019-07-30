@@ -11,14 +11,16 @@ public class NetworkManger {
     NetworkManger() 
     {   
         try {
-            clientSocket = new Socket("127.0.0.1", 10000);
+            clientSocket = new Socket("127.0.0.1",3000);
         } catch (IOException e) {
             e.printStackTrace();
         } //call the server
     }
 
     public String sendMsg(HashMap<String,String> data){
-
+        try {
+            clientSocket = new Socket("127.0.0.1",3000);
+        
         final String[] message =new String[1];
         Thread msg = new Thread(){
             @Override
@@ -41,19 +43,23 @@ public class NetworkManger {
                 catch (Exception e)  {
                     //TODO: handle exception
                 }finally{
-                    Thread.currentThread().interrupt();
+                   // Thread.currentThread().interrupt();
                 }
             }
         };
         msg.start();
         try {
             msg.join();
-            System.out.println("after thread"+message[0]);
+            System.out.println("after thread "+message[0]);
             return message[0];
         } catch (Exception e) {
             //TODO: handle exception
         }
+    } catch (IOException e) {
+        e.printStackTrace();
+    } 
         return "err";
+        
     }
 }
 

@@ -1,22 +1,13 @@
 
 package server;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.net.*;
+import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-
-import java.io.OutputStream;
-
-import com.mysql.jdbc.ResultSetImpl;
 
 public class socketHandler extends Thread {
 	Socket incoming;
@@ -34,24 +25,24 @@ public class socketHandler extends Thread {
 			ObjectOutputStream oos = null;
 			String responseMsg ="";
 			while (true) {
-				HashMap<String, String> obj = (HashMap) inFromClient.readObject(); // get Object from client
+				HashMap<String, String> obj = (HashMap) inFromClient.readObject();
+				System.out.println(obj); // get Object from client
 				System.out.println(obj.toString());
 				String func = obj.get("func");
-				String type = obj.get("userType") == "manager"? "manager": "Clients";
+				//String type = obj.get("userType") == "manager"? "manager": "Clients";
+				System.out.println(func);
 				switch (func) {
 					case "login":
-						ResultSet res = sql.selectQuery("name", type ,obj.get("username"));
+						ResultSet res = sql.selectQuery("name", "Clients" ,obj.get("username"));
 						if (!res.first()) {
-							responseMsg = "user login faild";
+							responseMsg = "login failed";
 						}
 						else {
-							while (res.next()) {
-								if( res.getString("password").equals(obj.get("password"))){
-									responseMsg = "login succsefully";
-								}
-								else{
-									responseMsg = "user login faild";
-								}
+							if( res.getString("password").equals(obj.get("password"))){
+								responseMsg = "login succsefully";
+							}
+							else{
+								responseMsg = "user login faild";
 							}
 						}
 						
@@ -78,7 +69,30 @@ public class socketHandler extends Thread {
 							System.out.println("Message sent to the client is "+responseMsg);
 							oos.flush();
 							oos.close();
-						break;
+							break;
+						case "getPayment":
+						System.out.println("getPayment");
+							String apartment = obj.get("apartment");
+							ResultSet monthPaid = sql.selectQuery("apertment", "Clients" ,apartment);
+							if (!monthPaid.first()) {
+								responseMsg = "Apartment not found";
+							}
+							else{
+								if( monthPaid.getString("monthPaid").length()>0){
+									responseMsg = monthPaid.getString("monthPaid");
+								}
+								else{
+									responseMsg = "not found any payments";
+								}
+							}
+							// send String to client
+							oos = new ObjectOutputStream(incoming.getOutputStream());
+							//write object to Socket
+							oos.writeUTF(responseMsg);
+							System.out.println("Message sent to the client is "+responseMsg);
+							oos.flush();
+							oos.close();
+							break;
 						default:
 							break;
 					}
