@@ -1,7 +1,4 @@
 package server;
-
-import static server.Sql.ConectingToSQL;
-
 import java.io.*;
 import java.net.*;
 
@@ -11,8 +8,8 @@ public class Server {
         Sql sql = new Sql(); // create sql object
 
         try {
-            s = new ServerSocket(3000);
-            ConectingToSQL(); // connecting to the sql database 
+            s = new ServerSocket(10000);
+            sql.ConectingToSQL(); // connecting to the sql database 
 
         } catch (IOException e) {
             System.out.println(e);
