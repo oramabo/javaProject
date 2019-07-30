@@ -8,13 +8,10 @@ import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Scanner;
-
 
 public class socketHandler extends Thread {
 	Socket incoming;
 	Sql sql;
-	Scanner scanner = new Scanner(System.in);// Create a Scanner object
 
 	socketHandler(Socket _in, Sql sql) {
 		this.incoming = _in;
@@ -90,20 +87,17 @@ public class socketHandler extends Thread {
 							}
 						case "getTotalPayments":
 							System.out.println("getTotalPayments");
+							apartment = obj.get("apartment");
 							ResultSet totalPayments = sql.selectAll("Clients");
-
-						
 							if (!totalPayments.first()) {
 								responseMsg = "Apartments not found";
 							}
 							else{
 								responseMsg = "";
-								while(totalPayments.getRow() != 0){
-									System.out.println(totalPayments.getRow());
+								while(totalPayments.next()){
 									String aprtmentNum = totalPayments.getString("apertment");
 									String monthsPaid = totalPayments.getString("monthPaid");
-									responseMsg += "apertment: "+aprtmentNum+ " paid months: " +monthsPaid +"\n";
-									totalPayments.next();
+									responseMsg += "apertment: "+aprtmentNum+ "paid months: " +monthPaid;
 								}
 							}
 							// send String to client
@@ -114,91 +108,8 @@ public class socketHandler extends Thread {
 							oos.flush();
 							oos.close();
 							break;
-
-						case "updatePayments":
-							System.out.println("insert apartment number to update the payment for");
-							apartment = obj.get("apartment");
-							col = "monthPaid";
-							String month = obj.get("month");
-							ResultSet paidMonth =  sql.selectQuery("apertment", "Clients", apartment);
-
-							if( !paidMonth.first() ){
-								responseMsg = "Apartment not found";
-							}
-							else{
-								String allMonth = paidMonth.getString(col);
-								String userID = paidMonth.getString("userId");
-								String payPerMonth = paidMonth.getString("payPerMonth");
-								String[] monthArr = allMonth.split(" ");
-								boolean flag = true;
-								for(String m : monthArr){
-									if( m.equals(month)){
-										responseMsg = "Month allready paid.";
-										flag = false;
-									}
-								}
-								if( flag ){
-									allMonth += " "+ month;
-									sql.insert_statement("monthpaid", 
-										new String[] { "userid","monthid","payAmount"}, 
-										new String[] { userID, month, payPerMonth }
-									);
-									sql.update_statement( new String[] { "apertment",apartment}, col ,"Clients", allMonth);
-									responseMsg = "Updated ok";
-								}
-							}
-							// send String to client
-							oos = new ObjectOutputStream(incoming.getOutputStream());
-							//write object to Socket
-							responseMsg = "update ok";
-							oos.writeUTF(responseMsg);
-							System.out.println("Message sent to the client is "+responseMsg);
-							oos.flush();
-							oos.close();
-							break;
-						
-						case "sumAll":
-							int sum;
-							responseMsg = "";								
-							for( int i = 1; i <= 12; i++){
-								ResultSet sumSql = sql.sumQuery("payAmount", "monthpaid",  new String[] { "monthid", Integer.toString(i) } );
-								if (!sumSql.first()) {
-									sum = 0;
-									responseMsg = "err";
-									break;
-								}
-								responseMsg += "month: "+ Integer.toString(i)+ " total income: "+ sumSql.getString("sum(payamount)") == null? "0": sumSql.getString("sum(payamount)")+ "\n";
-							}
-							// send String to client
-							oos = new ObjectOutputStream(incoming.getOutputStream());
-							//write object to Socket;
-							oos.writeUTF(responseMsg);
-							System.out.println("Message sent to the client is "+responseMsg);
-							oos.flush();
-							oos.close();
-							break;
 							
-							case "getTenantPayments":
-							
-									ResultSet myPaymentsSql = sql.selectQuery( );
-									if (!myPaymentsSql.first()) {
-										responseMsg = "err";
-										break;
-									
-									responseMsg += "month: "+ Integer.toString(i)+ " total income: "+sumSql.getString("sum(monthpaid)") + "\n";
-								}
-								// send String to client
-								oos = new ObjectOutputStream(incoming.getOutputStream());
-								//write object to Socket
-								responseMsg = "update ok";
-								oos.writeUTF(responseMsg);
-								System.out.println("Message sent to the client is "+responseMsg);
-								oos.flush();
-								oos.close();
-								break;
-						
-						}
-							
+					}
 				}
 			
 		} catch (IOException | SQLException |  ClassNotFoundException e) {

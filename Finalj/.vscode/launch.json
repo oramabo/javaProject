@@ -17,7 +17,7 @@
             "request": "launch",
             "mainClass": "client.main",
             "projectName": "Finalj",
-            "console": "integratedTerminal"
+            "console": "externalTerminal"
         },
         {
             "type": "java",

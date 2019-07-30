@@ -40,16 +40,16 @@ public class Sql {
 	
 	public static void insert_statement(String tableName, String[] cols,String[] values ){
 
-		String col = Arrays.toString(cols).replaceAll("["," ").replaceAll("]"," ");
+		String col = Arrays.toString(cols).replace("["," ").replace("]"," ");
 		String[] vals = new String[values.length];
 		Arrays.fill(vals,"?");
-		String val =  Arrays.toString(vals).replaceAll("["," ").replaceAll("]"," ");
+		String val =  Arrays.toString(vals).replace("["," ").replace("]"," ");
 
-		String sqlInsert = "insert into" + tableName +" ( "+ col +" ) values( "+val+")";
+		String sqlInsert = "insert into " + tableName +" ( "+ col +" ) values( "+val+")";
 		System.out.println("sql command:" + sqlInsert);
 		try {
 			PreparedStatement pst = connect.prepareStatement(sqlInsert);
-			int cnt = 0;
+			int cnt = 1;
 			for( String value : values){
 				pst.setString(cnt++, value);
 			}
@@ -71,11 +71,13 @@ public class Sql {
 		}
 		return null;
 	}
-	public ResultSet selectMonthPaidQuery() {
+
+	public ResultSet sumQuery(String col ,String table, String[] vals){
 		try {
 			// PreparedStatement - takes the java code select and replace it with sql code
-			PreparedStatement statement = connect.prepareStatement("SELECT monthPaid FROM javaproj.clients where apertment > 1" );
-			ResultSet result = statement.executeQuery();// execute the statement
+			PreparedStatement sumStatement = connect.prepareStatement("SELECT SUM("+col+") FROM "+table+" WHERE "+vals[0]+" = ?");
+			sumStatement.setString(1, vals[1]);
+			ResultSet result = sumStatement.executeQuery();// execute the statement
 			return result;
 			
 		} catch (SQLException e) {
@@ -99,7 +101,7 @@ public class Sql {
 	public static void connection()
 	{
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");// connect to the driver jar file mysql connector 
+			Class.forName("com.mysql.jdbc.Driver");// connect to the driver jar file mysql connector 
 			System.out.println("Works");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

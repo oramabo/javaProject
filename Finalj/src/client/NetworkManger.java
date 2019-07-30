@@ -50,7 +50,7 @@ public class NetworkManger {
         msg.start();
         try {
             msg.join();
-            System.out.println("after thread "+message[0]);
+            System.out.println("after thread \n"+message[0]);
             return message[0];
         } catch (Exception e) {
             //TODO: handle exception

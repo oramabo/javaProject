@@ -5,10 +5,11 @@ public class main {
 	public NetworkManger networkManger = new NetworkManger();
 	public Tenant client;
 	public Manager manager;
+	String userName;
 	Scanner scanner = new Scanner(System.in);// Create a Scanner object
 
 	public void login(){
-		String userName, pass;
+		String pass;
 		int userType , method;
 		HashMap<String,String> dataToSend = new HashMap<>();
 
@@ -67,12 +68,13 @@ public class main {
 
 			case 2:
 				// client
-				System.out.println("1.");
-				System.out.println("1.");
-				System.out.println("1.");
-				System.out.println("1.");
-				System.out.println("1.");
+				System.out.println("1. See all the payments paid by me");
+			
 				chosenFunc = Integer.parseInt( scanner.nextLine());
+				if(chosenFunc != 1){
+					menu(2);
+					return ;
+				}
 				handleClientSelection(chosenFunc);
 				break;	
 		}
@@ -80,11 +82,16 @@ public class main {
 	}
 public void handleClientSelection(int method ){
 
-	switch(method){
-		case 1:
-
-		break;
-	}
+	// switch(method){
+	// 	case 1:
+	// 		dataToSend.put("func", "getTenantPayments");
+			
+	// 		dataToSend.put("username", userName);
+	// 		String response = networkManger.sendMsg(dataToSend);
+	// 		System.out.println("months paid : " + response);
+	// 		menu(2);
+	// 		break;
+	// }
 
 
 }
@@ -107,7 +114,23 @@ public void handleManagerSelection(int method ){
 		case 2:
 			dataToSend.put("func", "getTotalPayments");
 			response = networkManger.sendMsg(dataToSend);
-			System.out.println(response);
+			System.out.println("getTotalPayments\n" + response);
+			break;
+		case 3:
+			dataToSend.put("func", "updatePayments");
+			System.out.println("Enter apartment number");
+			String apartNum = scanner.nextLine();
+			System.out.println("Enter month in number");
+			String month = scanner.nextLine();
+			dataToSend.put("apartment", apartNum);
+			dataToSend.put("month", month);
+			response = networkManger.sendMsg(dataToSend);
+			System.out.println("updatePayments\n" + response);
+			break;
+		case 4:
+			dataToSend.put("func", "sumAll");
+			response = networkManger.sendMsg(dataToSend);
+			System.out.println("sumAll\n" + response);
 			break;
 	}
 }
