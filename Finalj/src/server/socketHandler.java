@@ -71,7 +71,7 @@ public class socketHandler extends Thread {
 							oos.close();
 							break;
 						case "getPayment":
-						System.out.println("getPayment");
+							System.out.println("getPayment");
 							String apartment = obj.get("apartment");
 							ResultSet monthPaid = sql.selectQuery("apertment", "Clients" ,apartment);
 							if (!monthPaid.first()) {
@@ -85,6 +85,21 @@ public class socketHandler extends Thread {
 									responseMsg = "not found any payments";
 								}
 							}
+						case "getTotalPayments":
+							System.out.println("getTotalPayments");
+							apartment = obj.get("apartment");
+							ResultSet totalPayments = sql.selectMonthPaidQuery();
+
+							if (!totalPayments.first()) {
+								responseMsg = "Apartment not found";
+							}
+							else{
+								responseMsg = ("apartment number "+apartment+": "+ totalPayments);
+							}
+						}
+							
+						}
+							
 							// send String to client
 							oos = new ObjectOutputStream(incoming.getOutputStream());
 							//write object to Socket
@@ -93,10 +108,9 @@ public class socketHandler extends Thread {
 							oos.flush();
 							oos.close();
 							break;
-						default:
-							break;
+							
 					}
-			}
+			
 		} catch (IOException | SQLException |  ClassNotFoundException e) {
 			e.printStackTrace();
 		}

@@ -52,7 +52,7 @@ public class main {
 			case 1:
 				// manager
 				System.out.println("1. show payments for specific tanent");
-				System.out.println("2. show total payments for apartment");
+				System.out.println("2. show total payments for building");
 				System.out.println("3. update payment by apartment number, month, and payment amount");
 				System.out.println("4. show total payments for building by months.");
 				
@@ -102,6 +102,12 @@ public void handleManagerSelection(int method ){
 			dataToSend.put("apartment", apartNumber);
 			String response = networkManger.sendMsg(dataToSend);
 			System.out.println("month paid : " + response);
+			menu(1);
+			break;
+		case 2:
+			dataToSend.put("func", "getTotalPayments");
+			response = networkManger.sendMsg(dataToSend);
+			System.out.println(response);
 			break;
 	}
 }

@@ -71,6 +71,18 @@ public class Sql {
 		}
 		return null;
 	}
+	public ResultSet selectMonthPaidQuery() {
+		try {
+			// PreparedStatement - takes the java code select and replace it with sql code
+			PreparedStatement statement = connect.prepareStatement("SELECT monthPaid FROM javaproj.clients where apertment > 1" );
+			ResultSet result = statement.executeQuery();// execute the statement
+			return result;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public ResultSet selectAll(String table){
 		try {
