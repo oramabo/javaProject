@@ -18,7 +18,7 @@ public class Server {
             System.out.println(e);
             System.exit(1);
         }
-
+        // active the server
         while (true) {
             Socket incoming = null;
 

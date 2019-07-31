@@ -19,10 +19,11 @@ public class Sql {
 	
 	
 	public static void update_statement(String[] cond,String colName, String table, String val){
-		
+		// sql update statement
 		String sqlupdate = "UPDATE "+table+" SET "+colName+"=?  WHERE "+cond[0]+"=? ";
 		
 		try {
+			// execute sql query
 			PreparedStatement pst = connect.prepareStatement(sqlupdate);
 			
 			pst.setString(1, val);
@@ -39,15 +40,19 @@ public class Sql {
 	}
 	
 	public static void insert_statement(String tableName, String[] cols,String[] values ){
-
+		// sql instet stament
 		String col = Arrays.toString(cols).replace("["," ").replace("]"," ");
+		// get cols arr and break into string
 		String[] vals = new String[values.length];
+		// fill array with ? for the sql satement
 		Arrays.fill(vals,"?");
 		String val =  Arrays.toString(vals).replace("["," ").replace("]"," ");
 
+		// create a string var to save to query
 		String sqlInsert = "insert into " + tableName +" ( "+ col +" ) values( "+val+")";
 		System.out.println("sql command:" + sqlInsert);
 		try {
+			// execute sql query
 			PreparedStatement pst = connect.prepareStatement(sqlInsert);
 			int cnt = 1;
 			for( String value : values){

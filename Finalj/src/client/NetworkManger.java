@@ -8,6 +8,7 @@ import java.util.HashMap;
 public class NetworkManger {
 
     public Socket clientSocket;
+    // constractor
     NetworkManger() 
     {   
         try {
@@ -19,13 +20,14 @@ public class NetworkManger {
 
     public String sendMsg(HashMap<String,String> data){
         try {
+            // set new conncetion
             clientSocket = new Socket("127.0.0.1",3000);
         
         final String[] message =new String[1];
+        // ioen thread to send and recive msgs
         Thread msg = new Thread(){
             @Override
             public void run(){
-                System.out.println("sendMsg");
                 OutputStream os;
                 ObjectOutputStream mapOutputStream = null;  
                 try {
@@ -37,23 +39,20 @@ public class NetworkManger {
                     //Get the return message from the server
                     ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
                     message[0] = ois.readUTF();
-                    //System.out.println(message);
                     return;
                 }   
                 catch (Exception e)  {
-                    //TODO: handle exception
-                }finally{
-                   // Thread.currentThread().interrupt();
+                    e.printStackTrace();
                 }
             }
         };
         msg.start();
         try {
+            // wait for thread to finish and return the server response
             msg.join();
-            System.out.println("after thread \n"+message[0]);
             return message[0];
         } catch (Exception e) {
-            //TODO: handle exception
+            e.printStackTrace();
         }
     } catch (IOException e) {
         e.printStackTrace();
