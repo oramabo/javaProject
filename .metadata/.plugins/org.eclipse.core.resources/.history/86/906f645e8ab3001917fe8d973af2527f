@@ -90,14 +90,6 @@ public class socketHandler extends Thread {
 									responseMsg = "not found any payments";
 								}
 							}
-							// send String to client
-							oos = new ObjectOutputStream(incoming.getOutputStream());
-							//write object to Socket
-							oos.writeUTF(responseMsg);
-							System.out.println("Message sent to the client is "+responseMsg);
-							oos.flush();
-							oos.close();
-							break;
 						case "getTotalPayments":
 							System.out.println("getTotalPayments");
 							ResultSet totalPayments = sql.selectAll("Clients");
@@ -168,15 +160,16 @@ public class socketHandler extends Thread {
 							break;
 						
 						case "sumAll":
+							int sum;
 							responseMsg = "";								
 							for( int i = 1; i <= 12; i++){
 								ResultSet sumSql = sql.sumQuery("payAmount", "monthpaid",  new String[] { "monthid", Integer.toString(i) } );
 								if (!sumSql.first()) {
+									sum = 0;
 									responseMsg = "err";
 									break;
 								}
-								String num = sumSql.getString("sum(payamount)") == null? "0" :  sumSql.getString("sum(payamount)");
-								responseMsg += "month: "+ Integer.toString(i)+ " total income: "+ num + "\n";
+								responseMsg += "month: "+ Integer.toString(i)+ " total income: "+ sumSql.getString("sum(payamount)") == null? "0": sumSql.getString("sum(payamount)")+ "\n";
 							}
 							// send String to client
 							oos = new ObjectOutputStream(incoming.getOutputStream());
@@ -206,7 +199,7 @@ public class socketHandler extends Thread {
 						// 		oos.close();
 						// 		break;
 						
-				}
+						// }
 							
 				}
 			
